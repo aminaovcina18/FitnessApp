@@ -1,0 +1,86 @@
+﻿@page
+@model Fitness_WebApplication.Areas.Account.Pages.DetailsModel
+@{
+    ViewData["Title"] = "Edit Settings";
+}
+<body>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row justify-content-center m-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm m-4">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4 mt-3 text-primary">the no excuse now app</h3>
+                            <form class="form" id="userUpdateForm" method="post" novalidate="novalidate">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Name</label>
+                                    <input asp-for="Input.Firstname" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="First name" />
+                                    <span asp-validation-for="Input.Firstname" id="InputFirstname" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Lastname</label>
+                                    <input asp-for="Input.Lastname" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Last name" />
+                                    <span asp-validation-for="Input.Lastname" id="InputLastname" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Phone number</label>
+                                    <input asp-for="Input.PhoneNumber" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Phone number" />
+                                    <span asp-validation-for="Input.PhoneNumber" id="InputPhoneNumber" class="text-danger"></span>
+                                </div>
+                               
+                                <hr />
+                                <h6 class="text-center">Goal settings</h6>
+                                <hr />
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="inlineRadio1" value="true" asp-for="Input.IsCountSelected">
+                                    <label class="form-check-label" for="inlineRadio1">Count</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="inlineRadio2" value="false" asp-for="Input.IsCountSelected">
+                                    <label class="form-check-label" for="inlineRadio2">Duration</label>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Goal value</label>
+                                    <input asp-for="Input.GoalValue" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Goal value" type="number" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2 rounded-3">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#userUpdateForm').submit(function (event) {
+                event.preventDefault();
+                console.log(this)
+                $.ajax({
+                    url: '/Account/Details',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $('.text-danger').text('');
+                        } else {
+                            toastr.error(response.message);
+                            $('#InputFirstname').text(response.errors["Input.Firstname"]);
+                            $('#InputLastname').text(response.errors["Input.Lastname"]);
+                            $('#InputPhoneNumber').text(response.errors["Input.PhoneNumber"]);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("An error occurred: " + textStatus);
+                    }
+                });
+            });
+        });
+    </script>
+</body>

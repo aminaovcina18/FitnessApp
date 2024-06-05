@@ -1,0 +1,72 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<style>
+    a{
+        text-decoration: none;
+    }
+</style>
+<div class="text-center">
+    @if (@ViewData["message"] != null && @ViewData["message"] != "")
+    {
+        <div class="alert alert-danger">
+            <h6 class="text-danger">@ViewData["message"] </h6>
+        </div>
+    }
+    <h3 class="text-center">Welcome</h3>
+    <h6 class="text-center text-muted">Choose one of available options below!</h6>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm m-4">
+                <div class="card-body">
+                    <a asp-area="Activity" asp-page="/Create">
+                        <h4 class="card-title text-center mb-4 mt-3 text-success">Had an activity?</h4>
+                    </a>
+                 
+                    <img src="~/media/exercise.png" class="mb-3" style="height: 100px;" /><br />
+                   
+                </div>
+            </div>
+          
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm m-4">
+                <div class="card-body">
+                    <a asp-area="Activity" asp-page="/GoalList">
+                        <h4 class="card-title text-center mb-4 mt-3 text-primary">See my progress</h4>
+                    </a>
+                  
+                    <img src="~/media/goal.png" class="mb-3" style="height: 100px;" /><br />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm m-4">
+                <div class="card-body">
+                    <a asp-area="Account" asp-page="/Details">
+                        <h4 class="card-title text-center mb-4 mt-3 text-primary">Change my goal</h4>
+                    </a>
+                    <img src="~/media/settings.png" class="mb-3" style="height: 100px;" /><br />
+                   
+                </div>
+            </div>            
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm m-4">
+                <div class="card-body">
+                    <br />
+                    <img src="~/media/logout.png" class="mb-3" style="height: 100px;" /><br />
+
+                    <form class="form" method="post" novalidate="novalidate">
+                        <button type="submit" class="btn btn-danger mb-2 rounded-3">Sign me out</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+﻿@page
+@model Fitness_WebApplication.Areas.Activity.Pages.DetailsModel
+@{
+    ViewData["Title"] = "Edit Activity";
+}
+<body>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row justify-content-center m-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm m-4">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4 mt-3 text-primary">the no excuse now app</h3>
+                            <form class="form" id="activityUpdateForm" method="post" novalidate="novalidate">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Name</label>
+                                    <input asp-for="Input.Name" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Name" />
+                                    <span asp-validation-for="Input.Name" id="InputName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Description</label>
+                                    <input asp-for="Input.Description" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Description" />
+                                    <span asp-validation-for="Input.Description" id="InputDescription" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Duration</label>
+                                    <input asp-for="Input.Duration" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Duration (in minutes)" type="number" />
+                                    <span asp-validation-for="Input.Duration" id="InputDuration" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Date</label>
+                                    <input asp-for="Input.Date" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Date and time" type="datetime-local" />
+                                    <span asp-validation-for="Input.Date" id="InputDate" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="font-size-h6 font-weight-bolder text-dark">Activity type</label>
+                                    @Html.DropDownListFor(m => m.Input.ActivityType, Model.Types, new { @class = "form-control form-control-solid h-auto py-6 px-6 rounded-lg" })
+                                    <span asp-validation-for="Input.ActivityType" id="InputActivityType" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2 rounded-3">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#activityUpdateForm').submit(function (event) {
+                event.preventDefault();
+                console.log(this)
+                $.ajax({
+                    url: '/Activity/Details?id=' + new URLSearchParams(window.location.search).get('id'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $('.text-danger').text('');
+                        } else {
+                            toastr.error(response.message);
+                            $('#InputName').text(response.errors["Input.Name"]);
+                            $('#InputDate').text(response.errors["Input.Date"]);
+                            $('#InputDescription').text(response.errors["Input.Description"]);
+                            $('#InputDuration').text(response.errors["Input.Duration"]);
+                            $('#InputActivityType').text(response.errors["Input.ActivityType"]);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("An error occurred: " + textStatus);
+                    }
+                });
+            });
+        });
+    </script>
+</body>

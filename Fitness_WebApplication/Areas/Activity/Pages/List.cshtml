@@ -1,0 +1,140 @@
+﻿@page
+@model Fitness_WebApplication.Areas.Activity.Pages.ListModel
+@{
+    ViewData["Title"] = "My Activities";
+
+}
+<div class="container">
+    <main role="main" class="pb-3">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card shadow-sm m-4">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4 mt-3 text-primary">The No Excuse Now App</h3>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input id="searchInput" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg mb-2" placeholder="Search" />
+                            </div>
+                            <div class="col-md-3">
+                                <select id="activityTypeInput" name="activityTypeInput" asp-items="Model.Types" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg">
+                                    <option value="">-- Select an option --</option>
+                                </select>  
+                            </div>
+                            <div class="col-md-3">
+                                <input id="dateInput" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg mb-2" placeholder="" type="date" />
+                            </div>
+                           <div class="col-md-3">
+                                <button class="btn btn-primary" onclick="loadData(1)">Search</button>
+                                <button class="btn btn-light" onclick="reset()">Reset</button>
+                           </div>
+                        </div>
+                        <hr />
+                        <table class="table">
+                            <tbody id="itemsTableBody">
+                                @foreach (var item in Model.TableData)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td>@item.ActivityType</td>
+                                        <td>@item.Date.ToShortDateString() @item.Date.ToShortTimeString()</td>
+                                        <td>@item.Duration minutes</td>
+                                        <td><a class="btn btn-info w-100" asp-area="Activity" asp-page="/Details" asp-route-id="@item.Id">Edit</a></td>
+                                        <td><button onclick="deleteActivity(@item.Id)" class="btn btn-danger w-100">Delete</button></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-3">
+                                <button id="prevButton" onclick="loadData(currentPage - 1)" class="btn btn-primary w-100">Previous</button>
+                            </div>
+                            <div class="col-3">
+                                <button id="nextButton" onclick="loadData(currentPage + 1)" class="btn btn-primary w-100">Next</button>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        var currentPage = 1;
+        var numberOfPages = @Model.NumberOfPages;
+        function loadData(page) {
+            if (page < 1 || page > numberOfPages) return;
+            var search = $('#searchInput').val();
+            var date = $('#dateInput').val();
+            var activityType = $('#activityTypeInput').val();
+            $.ajax({
+                url: '/Activity/List?handler=LoadData',
+                type: 'GET',
+                data: {
+                    activityType: activityType,
+                    date: date,
+                    search: search,
+                    pageNumber: page,
+                    pageSize: 10
+                },
+                success: function (result) {
+                    $('#itemsTableBody').html(result);
+                    currentPage = page;
+                    updatePaginationButtons();
+                }
+            });
+        }
+        function reset() {
+            document.getElementById('searchInput').value = "";
+            document.getElementById('activityTypeInput').value = "";
+            document.getElementById('dateInput').value = "";
+            $.ajax({
+                url: '/Activity/List?handler=LoadData',
+                type: 'GET',
+                data: {
+                    activityType: null,
+                    date: null,
+                    search: null,
+                    pageNumber: 1,
+                    pageSize: 10
+                },
+                success: function (result) {
+                    $('#itemsTableBody').html(result);
+                    currentPage = 1;
+                    updatePaginationButtons();
+                }
+            });
+        }
+        function deleteActivity(id) {
+            $.ajax({
+                url: '/Activity/List?handler=Delete',
+                type: 'POST',
+                data: { id: id},
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        loadData(1);
+                    } else {
+                        toastr.error(response.message);                       
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    toastr.error("An error occurred: " + textStatus);
+                }
+            });
+
+        }
+        function updatePaginationButtons() {
+            $('#prevButton').prop('disabled', currentPage === 1);
+            $('#nextButton').prop('disabled', currentPage === numberOfPages);
+        }
+
+        $(document).ready(function () {
+            updatePaginationButtons();
+        });
+    </script>
+}

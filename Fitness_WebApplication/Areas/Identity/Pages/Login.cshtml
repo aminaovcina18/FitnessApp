@@ -1,0 +1,37 @@
+﻿@page
+@model Fitness_WebApplication.Areas.Identity.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+<body>
+    <div class="container" style="margin-top: 10%;">
+        <main role="main" class="pb-3">
+            <div class="row justify-content-center m-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm m-4">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4 mt-3 text-primary">the no excuse now app</h3>
+                            <form class="form" method="post" novalidate="novalidate">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group mb-3">
+                                    <input asp-for="Input.UserName" id="username" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Username" autofocus />
+                                    <span asp-validation-for="Input.UserName" id="usernameError" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input asp-for="Input.Password" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Password" />
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2 rounded-3">Sign in</button>                                    
+                                    <a asp-page="/Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-info w-100">Registration </a>
+                                    <p class="text-center text-muted mb-3">No account yet?</p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+</body>

@@ -1,0 +1,14 @@
+﻿@model List<FitnessApp_Domain.Models.Activity.ActivityDto>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.Name</td>
+        <td>@item.Description</td>
+        <td>@item.ActivityType</td>
+        <td>@item.Date.ToShortDateString() @item.Date.ToShortTimeString()</td>
+        <td>@item.Duration minutes</td>
+        <td><a class="btn btn-info w-100" asp-area="Activity" asp-page="/Details" asp-route-id="@item.Id">Edit</a></td>
+        <td><button onclick="deleteActivity(@item.Id)" class="btn btn-danger w-100">Delete</button></td>
+    </tr>
+}

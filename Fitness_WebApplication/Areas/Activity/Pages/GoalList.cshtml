@@ -1,0 +1,70 @@
+﻿@page
+@model Fitness_WebApplication.Areas.Activity.Pages.GoalListModel
+@{
+    ViewData["Title"] = "My Goals";
+
+}
+<body>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row justify-content-center m-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm m-4">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4 mt-3 text-primary">The No Excuse Now App</h3>
+                            <table class="table">
+                                <caption>Achieved goals by dates</caption>
+                                <tbody id="goalTableBody">
+                                    @foreach (var item in Model.TableData)
+                                    {
+                                        <tr class="@(item.Achived ? "bg-success" : "bg-danger")">
+                                            <td class="text-center">@item.Date.ToString("dd/MM/yyyy")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-6">
+                                    <button onclick="GetGoals(currentPage + 1)" class="btn btn-primary w-100">Previous</button>
+                                </div>
+                                <div class="col-6">
+                                    <button onclick="GetGoals(currentPage - 1)" class="btn btn-primary w-100" disabled="true" id="next">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        var currentPage = 1;
+        function renderTable(data) {
+            var html = '';
+            data.forEach(function (item) {
+                var rowClass = item.achived ? 'bg-success' : 'bg-danger';
+                html += '<tr class="' + rowClass + '"><td class="text-center">' + new Date(item.date).toLocaleDateString() + '</td></tr>';
+            });
+            $('#goalTableBody').html(html);
+        }
+        function GetGoals(page) {
+            if (page != 1) {
+                $("#next").prop("disabled", false);
+            }
+            else {
+                $("#next").prop("disabled", true);
+            }
+            $.ajax({
+                url: '/Activity/GoalList?handler=Pagination&pageNumber=' + page,
+                type: 'GET',
+                success: function (data) {
+                    renderTable(data.data);
+                    currentPage = data.page;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    toastr.error("An error occurred: " + textStatus);
+                }
+            });
+        }
+    </script>
+</body>

@@ -1,0 +1,85 @@
+﻿@page
+@model Fitness_WebApplication.Areas.Identity.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Registration";
+}
+<body>
+    <div class="container" id="formContainer">
+        <main role="main" class="pb-3">
+            <div class="row justify-content-center m-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm m-4">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4 mt-3 text-primary">the no excuse now app</h3>
+                            <form class="form" id="registrationForm" method="post" asp-page-handler="Register" novalidate="novalidate">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group mb-4">
+                                    <input asp-for="Input.Firstname" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="First name" />
+                                    <span asp-validation-for="Input.Firstname" id="InputFirstname" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input asp-for="Input.Lastname" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Last name" />
+                                    <span asp-validation-for="Input.Lastname" id="InputLastname" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input asp-for="Input.Email" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Email" />
+                                    <span asp-validation-for="Input.Email" id="InputEmail" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input asp-for="Input.PhoneNumber" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Phone number" />
+                                    <span asp-validation-for="Input.PhoneNumber" id="InputPhoneNumber" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <input asp-for="Input.Username" id="username" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Username" autofocus />
+                                    <span asp-validation-for="Input.Username" id="InputUsername" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input asp-for="Input.Password" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Password" />
+                                    <span asp-validation-for="Input.Password" id="InputPassword" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <input asp-for="Input.ConfirmPassword" class="form-control form-control-solid h-auto py-6 px-6 rounded-lg" placeholder="Confirm password" />
+                                    <span asp-validation-for="Input.ConfirmPassword" id="InputConfirmPassword" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2 rounded-3">Register</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#registrationForm').submit(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/Identity/Register',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            window.location.href = "/Identity/Login";
+                        } else {
+                            toastr.error(response.message);
+                            $('#InputFirstname').text(response.errors["Input.Firstname"]);
+                            $('#InputLastname').text(response.errors["Input.Lastname"]);
+                            $('#InputEmail').text(response.errors["Input.Email"]);
+                            $('#InputPhoneNumber').text(response.errors["Input.PhoneNumber"]);
+                            $('#InputUsername').text(response.errors["Input.Username"]);
+                            $('#InputPassword').text(response.errors["Input.Password"]);
+                            $('#InputConfirmPassword').text(response.errors["Input.ConfirmPassword"]);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("An error occurred: " + textStatus);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
